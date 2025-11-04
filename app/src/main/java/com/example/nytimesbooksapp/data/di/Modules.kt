@@ -2,7 +2,7 @@ package com.example.nytimesbooksapp.data.di
 
 import android.app.Application
 import androidx.room.Room
-import com.example.nytimesbooksapp.data.common.appConfig.Appconfig
+import com.example.nytimesbooksapp.data.common.appconfig.Appconfig
 import com.example.nytimesbooksapp.data.local.BookDao
 import com.example.nytimesbooksapp.data.local.Bookdatabase
 import com.example.nytimesbooksapp.data.network.ApiService
@@ -23,20 +23,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 object Modules {
     @Provides
     fun provideinterception(): OkHttpClient {
-
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
-
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .addInterceptor(Interception(Appconfig.Keys.API_KEY))
             .build()
     }
-
-
-
-
     @Provides
     fun  provideretrofit(okHttpClient: OkHttpClient): Retrofit{
         return Retrofit.Builder()
@@ -48,24 +42,18 @@ object Modules {
     fun provideApiservice(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
-
-
-
-@Provides
+    @Provides
 fun providedatabase(app: Application): Bookdatabase{
     return Room.databaseBuilder(
         app,
         Bookdatabase::class.java,
         "book_db")
-        .fallbackToDestructiveMigration()
         .build()
 }
     @Provides
     fun provideDao(db: Bookdatabase): BookDao = db.bookdao()
-
-
     @Provides
-fun provideBookRepo(aPiService: ApiService,bookDao: BookDao): Bookrepositry {
-    return Bookrepositryimp(aPiService, bookDao)
+fun provideBookRepo(apiservice: ApiService,bookDao: BookDao): Bookrepositry {
+    return Bookrepositryimp(apiservice, bookDao)
 }
 }

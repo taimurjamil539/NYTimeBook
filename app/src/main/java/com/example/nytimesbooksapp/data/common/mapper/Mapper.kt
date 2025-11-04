@@ -31,7 +31,6 @@ fun Book.toEntity(): Bookentity {
 
     )
 }
-
 fun Bookentity.toDomain(): Bookmodel{
 
     return Bookmodel(

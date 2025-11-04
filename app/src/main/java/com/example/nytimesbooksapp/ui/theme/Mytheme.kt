@@ -25,7 +25,6 @@ private val LightColorPalette = lightColorScheme(
     onSurface = Color(0xFF2B1B12),
 
     )
-
 private val DarkColorPalette = darkColorScheme(
     primary = Color(0xFFFF8A65),
     onPrimary = Color(0xFF4A1E0F),
@@ -34,7 +33,6 @@ private val DarkColorPalette = darkColorScheme(
     surface = Color(0xFF261712),
     onSurface = Color(0xFFFFEDE3)
 )
-
 private val MyTypography = Typography(
     bodyLarge = androidx.compose.ui.text.TextStyle(
         fontFamily = FontFamily.SansSerif,
@@ -54,9 +52,6 @@ fun MyAppTheme(
     content: @Composable () -> Unit
 ) {
     val colors = if (darkTheme) DarkColorPalette else LightColorPalette
-
-
-
     MaterialTheme(
         colorScheme = colors,
         typography = MyTypography,

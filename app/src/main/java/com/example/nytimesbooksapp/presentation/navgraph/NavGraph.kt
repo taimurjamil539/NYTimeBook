@@ -19,12 +19,12 @@ fun Navgraph(){
     val navController= rememberNavController()
     val viewModel: Bookviewmodel = hiltViewModel()
 
-    NavHost(navController=navController, startDestination = "splash"){
-        composable("splash"){ Splashscreen(navController) }
+    NavHost(navController=navController, startDestination = Navroot.Splash.route){
+        composable(Navroot.Splash.route){ Splashscreen(navController) }
 
-        composable("home"){ Homescreen(navController,viewModel) }
+        composable(Navroot.Home.route){ Homescreen(navController,viewModel) }
 
-        composable("detail"){ DetailScreen(navController,viewModel) }
+        composable(Navroot.Detail.route){ DetailScreen(navController,viewModel) }
 
     }
 }

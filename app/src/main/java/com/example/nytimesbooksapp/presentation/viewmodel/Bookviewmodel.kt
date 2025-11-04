@@ -1,7 +1,5 @@
 package com.example.nytimesbooksapp.presentation.viewmodel
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -11,6 +9,8 @@ import com.example.nytimesbooksapp.domain.model.Bookmodel
 import com.example.nytimesbooksapp.domain.usecase.Bookusecase
 import com.example.nytimesbooksapp.presentation.state.Bookstate
 import com.example.nytimesbooksapp.ui.theme.Keyprefs
+import com.example.nytimesbooksapp.ui.theme.Keyprefs.Companion.DEFAULT_SELECTED_DATE
+import com.example.nytimesbooksapp.ui.theme.Keyprefs.Companion.DEFAULT_SYNC_DATE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,18 +26,14 @@ class Bookviewmodel @Inject constructor(private val usecase: Bookusecase, privat
   private val _isrefreshing = mutableStateOf(false)
     val isrefreshing: State<Boolean> = _isrefreshing
     val isDarkMood= datastore.isDarkMood.stateIn(viewModelScope, SharingStarted.Lazily,false)
-    val lastSyncDate=datastore.lastSyncDate.stateIn(viewModelScope, SharingStarted.Lazily,"Never")
-  private val _detailbook= mutableStateOf<Bookmodel?>(null)
+    val lastSyncDate=datastore.lastSyncDate.stateIn(viewModelScope, SharingStarted.Lazily,DEFAULT_SYNC_DATE)
+    private val _detailbook= mutableStateOf<Bookmodel?>(null)
+    private var loadOnce=false
     val detailbook:State<Bookmodel?> = _detailbook
-    val selecteddate= datastore.selecteddate.stateIn(viewModelScope, SharingStarted.Lazily,"")
-
-
-
+    val selecteddate= datastore.selecteddate.stateIn(viewModelScope, SharingStarted.Lazily,DEFAULT_SELECTED_DATE)
     fun setdetailbook(bookdetail: Bookmodel?){
         _detailbook.value=bookdetail
     }
-
-
     fun darktoggle(isDark: Boolean){
         viewModelScope.launch {
             datastore.savetheme(isDark)
@@ -48,23 +44,13 @@ class Bookviewmodel @Inject constructor(private val usecase: Bookusecase, privat
             datastore.savelastsync(data)        }
 
     }
-
-
-
-
-    init {
-        getbooks()
-    }
-
-    fun getbooks() {
+    fun getbooks(forceRefresh: Boolean = false) {
+        if(loadOnce && !forceRefresh) return
         viewModelScope.launch {
             usecase().collect { result ->
                 when (result) {
                     is Resources.Loading -> {
-                        _state.value = Bookstate.Loading
-
-                    }
-
+                        _state.value = Bookstate.Loading }
                     is Resources.Success -> {
                         val data = result.data ?: emptyList()
                         if (data.isEmpty()) {
@@ -73,41 +59,31 @@ class Bookviewmodel @Inject constructor(private val usecase: Bookusecase, privat
                             _state.value = Bookstate.Success(data)
                         }
                     }
-
                     is Resources.Error -> {
-
                         val message = if (result.message?.contains("Unable to resolve host") == true)
-                            "No Internet Connection"
+                            ErrorMessages.NO_INTERNET
                         else
-                            result.message ?: "Something went wrong"
+                            result.message ?: ErrorMessages.GENERIC_ERROR
                         _state.value = Bookstate.Error(message)                    }
                 }
+                loadOnce=true
             }
         }
-
     }
-
     fun refreshscreen() {
-
         viewModelScope.launch {
             _isrefreshing.value = true
             delay(3000L)
             _isrefreshing.value = false
-            getbooks()
-
-
+            getbooks(forceRefresh = true)
             val now = java.text.SimpleDateFormat(
-                "hh:mm a",
+                Format.TIME_FORMAT,
                 java.util.Locale.getDefault()
             ).format(java.util.Date())
 
             lastsyncdate(now)
-
-
-
         }
     }
-    @RequiresApi(Build.VERSION_CODES.O)
     fun dateselected(date: String) {
         viewModelScope.launch {
 
@@ -122,15 +98,10 @@ class Bookviewmodel @Inject constructor(private val usecase: Bookusecase, privat
                     _state.value = Bookstate.Success(result)
                 }
             } catch (e: Exception) {
-                _state.value = Bookstate.Error("Failed to fetch by date: ${e.message}")
+                _state.value = Bookstate.Error("${ErrorMessages.FETCH_DATE_ERROR}: ${e.message}")
             }
         }
     }
-
-
-
-
-
     fun searchbooks(qurey: String){
         if (qurey.isBlank()){
             getbooks()
@@ -143,7 +114,7 @@ class Bookviewmodel @Inject constructor(private val usecase: Bookusecase, privat
                 _state.value= Bookstate.Success(result)
 
             }catch (e: Exception){
-                _state.value= Bookstate.Error("Search Failed:${e.message}")
+                _state.value= Bookstate.Error("${ErrorMessages.SEARCH_ERROR}:${e.message}")
             }
         }
     }

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.nytimesbooksapp.domain.model.Bookmodel
+import com.example.nytimesbooksapp.presentation.navgraph.Navroot
 import com.example.nytimesbooksapp.presentation.viewmodel.Bookviewmodel
 
 @Composable
@@ -35,7 +36,7 @@ fun BookCard(book: Bookmodel, navController: NavController,viewmodel: Bookviewmo
             .clip(RoundedCornerShape(16.dp))
             .clickable {
                 viewmodel.setdetailbook(book)
-                navController.navigate("detail")
+                navController.navigate(Navroot.Detail.route)
             },
         elevation = CardDefaults.cardElevation(6.dp),
         colors = CardDefaults.cardColors(
@@ -55,18 +56,14 @@ fun BookCard(book: Bookmodel, navController: NavController,viewmodel: Bookviewmo
                     .clip(RoundedCornerShape(12.dp)),
                 contentScale = ContentScale.Fit
             )
-
             Spacer(modifier = Modifier.height(10.dp))
-
             Text(
                 text = book.title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-
             Spacer(modifier = Modifier.height(6.dp))
-
             Text(
                 text = book.description,
                 style = MaterialTheme.typography.bodySmall,

@@ -35,8 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.dropShadow
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -46,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.nytimesbooksapp.ui.theme.MyAppTheme
 import androidx.core.net.toUri
 import com.example.nytimesbooksapp.presentation.viewmodel.Bookviewmodel
 
@@ -58,9 +55,7 @@ fun DetailScreen(
     val book = viewmodel.detailbook.value
     val isDark by viewmodel.isDarkMood.collectAsState(initial = false)
     val scrollState= rememberScrollState()
-
-    MyAppTheme(darkTheme =isDark) {
-        Scaffold(
+    Scaffold(
             topBar = {
                 Surface(
                     modifier = Modifier.statusBarsPadding(),
@@ -189,10 +184,7 @@ fun DetailScreen(
                         ) {
                         Text("Buy Now")
                     }
-
-
-
                 }
         }
+}
     }
-}}

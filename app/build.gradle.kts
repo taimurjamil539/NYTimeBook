@@ -4,8 +4,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    kotlin("kapt") // use kapt for Hilt
-    id("dagger.hilt.android.plugin")
+    alias (libs.plugins.hilt)
+    kotlin("kapt")
+
 
 
 }
@@ -29,12 +30,13 @@ android {
 
     buildTypes {
         val apikey = properties.getProperty("API_KEY")
+        val baseurl=properties.getProperty("BASE_URL")
         debug {
-            buildConfigField("String", "BASE_URL", "\"https://api.nytimes.com/svc/books/v3/\"")
+            buildConfigField("String", "BASE_URL", "\"$baseurl\"")
             buildConfigField("String", "API_KEY", "\"$apikey\"")
         }
         release {
-            buildConfigField("String", "BASE_URL", "\"https://api.nytimes.com/svc/books/v3/\"")
+            buildConfigField("String", "BASE_URL", "\"$baseurl\"")
             buildConfigField("String", "API_KEY", "\"$apikey\"")
             isMinifyEnabled = false
             proguardFiles(
@@ -152,6 +154,9 @@ dependencies {
 
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.35.1-alpha")
     implementation("androidx.activity:activity-compose:1.9.0")
+    implementation("com.jakewharton.threetenabp:threetenabp:1.4.6")
+
+
 
 
 

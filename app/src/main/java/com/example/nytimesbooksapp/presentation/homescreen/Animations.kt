@@ -14,11 +14,6 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.NYtimeprojectBooks.R
-
-
-
-
-
 @Composable
 fun LoadingAnimation() {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading))
@@ -26,7 +21,6 @@ fun LoadingAnimation() {
         composition = composition,
         iterations = LottieConstants.IterateForever
     )
-
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -38,7 +32,6 @@ fun LoadingAnimation() {
         )
     }
 }
-
 @Composable
 fun ErrorAnimation() {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.error))
@@ -46,7 +39,6 @@ fun ErrorAnimation() {
         composition = composition,
         iterations = LottieConstants.IterateForever
     )
-
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

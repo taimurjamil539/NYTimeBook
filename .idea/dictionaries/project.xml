@@ -30,12 +30,14 @@
       <w>getbookbydate</w>
       <w>getbooklist</w>
       <w>getbooks</w>
+      <w>gride</w>
       <w>insertbook</w>
       <w>isrefreshing</w>
       <w>keyprefs</w>
       <w>lastsyncdate</w>
       <w>moduless</w>
       <w>navgraph</w>
+      <w>navroot</w>
       <w>newrequest</w>
       <w>newurl</w>
       <w>providedatabase</w>

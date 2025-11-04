@@ -5,7 +5,7 @@ import com.example.nytimesbooksapp.data.local.BookDao
 import com.example.nytimesbooksapp.data.model.Book
 import com.example.nytimesbooksapp.data.model.Lists
 import com.example.nytimesbooksapp.data.model.Results
-import com.example.nytimesbooksapp.data.model.nytimes
+import com.example.nytimesbooksapp.data.model.Nytimes
 import com.example.nytimesbooksapp.data.network.ApiService
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -42,7 +42,7 @@ class BookrepositryimpTest {
             created_date = "2025-10-20"
         )
 
-        val apiResponse = nytimes(
+        val apiResponse = Nytimes(
             results = Results(
                 lists = listOf(
                     Lists(books = listOf(book1))
@@ -102,7 +102,7 @@ class BookrepositryimpTest {
             created_date = "2025-10-20"
 
         )
-        val apiResponse = nytimes(
+        val apiResponse = Nytimes(
             results = Results(
                 lists = listOf(
                     Lists(books = listOf(book2))
@@ -130,7 +130,7 @@ class BookrepositryimpTest {
             created_date = "2025-10-20"
 
         )
-        val apiResponse = nytimes(
+        val apiResponse = Nytimes(
             results = Results(
                 lists = listOf(
                     Lists(books = listOf(book3))

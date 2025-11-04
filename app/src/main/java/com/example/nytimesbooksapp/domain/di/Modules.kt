@@ -8,15 +8,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
-
-
 object Moduless {
-
-
     @Provides
 fun provideUsecase(bookrepositry: Bookrepositry): Bookusecase {
     return Bookusecase(bookrepositry)
 }
-
 }
 

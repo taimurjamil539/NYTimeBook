@@ -1,7 +1,5 @@
 package com.example.nytimesbooksapp.presentation.homescreen
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -31,10 +29,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.nytimesbooksapp.presentation.state.Bookstate
 import com.example.nytimesbooksapp.presentation.viewmodel.Bookviewmodel
-import com.example.nytimesbooksapp.ui.theme.MyAppTheme
+import com.example.nytimesbooksapp.presentation.viewmodel.ErrorMessages
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun Homescreen(
@@ -50,21 +47,13 @@ fun Homescreen(
     val grideState = rememberLazyGridState()
     var showMenu by remember { mutableStateOf(false) }
 
-
-
-
-
-
+    LaunchedEffect(Unit) {
+        viewmodel.getbooks()
+    }
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing,
-        onRefresh = { viewmodel.refreshscreen() }
-    )
-
-    MyAppTheme(darkTheme = isDark) {
-
-
-        Scaffold(
-
+        onRefresh = { viewmodel.refreshscreen() })
+    Scaffold(
             topBar = {
                 Surface(
                     modifier = Modifier.statusBarsPadding(),
@@ -79,7 +68,6 @@ fun Homescreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-
                         Text(
                             text = "NY Time Books",
                             color = MaterialTheme.colorScheme.onPrimary,
@@ -122,7 +110,8 @@ fun Homescreen(
                                     Text("Refresh:",color = MaterialTheme.colorScheme.onSurface)
                                     Spacer(Modifier.width(12.dp))
                                     Icon(imageVector = Icons.Default.Refresh, contentDescription = "refresh") }
-                            })
+                            }
+                            )
                             DropdownMenuItem(onClick = {},
                                 text = {
                                     Row(
@@ -132,7 +121,6 @@ fun Homescreen(
                                     ){ Text("Last Sync: $lastSync",color = MaterialTheme.colorScheme.onSurface) }
                                 }
                                 )
-
                         }
                         }
 
@@ -140,11 +128,7 @@ fun Homescreen(
                 }
             }
         ) { paddingValues ->
-
-
-
-
-                Box(
+            Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(color = MaterialTheme.colorScheme.background)
@@ -152,12 +136,7 @@ fun Homescreen(
                         .padding(paddingValues)
                         .padding(horizontal = 12.dp)
                 )  {
-
-
-
-
-
-                    when (statevalue) {
+                when (statevalue) {
                         is Bookstate.Loading -> {
                             Box(modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.surface), contentAlignment = Alignment.Center) {
                                 LoadingAnimation()
@@ -169,7 +148,7 @@ fun Homescreen(
 
                         is Bookstate.Empty -> {
                             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Text("Books not found")
+                                Text(ErrorMessages.EMPTY_ERROR)
                             }
                         }
                         is Bookstate.Success -> {
@@ -216,18 +195,14 @@ fun Homescreen(
                             }
                         }
                     }
-
-                    PullRefreshIndicator(
+                PullRefreshIndicator(
                         refreshing = isRefreshing,
                         state = pullRefreshState,
-                        modifier = Modifier.align(Alignment.TopCenter)
-                    )
+                        modifier = Modifier.align(Alignment.TopCenter))
                     ScrollToTopBottom(grideState = grideState)
-
-
             }
         }
-    }
+
 }
 
 

@@ -1,7 +1,5 @@
 package com.example.nytimesbooksapp.presentation.homescreen
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -10,12 +8,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.nytimesbooksapp.presentation.viewmodel.Bookviewmodel
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
+import org.threeten.bp.ZoneId
+import org.threeten.bp.format.DateTimeFormatter
 
-@RequiresApi(Build.VERSION_CODES.O)
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateFilterSection(
@@ -24,10 +23,8 @@ fun DateFilterSection(
     val selectedDate by viewModel.selecteddate.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
-
     val isoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val displayFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-
 
     val displayDate = remember(selectedDate) {
         if (selectedDate.isNotEmpty()) {
@@ -38,9 +35,7 @@ fun DateFilterSection(
             }
         } else ""
     }
-
     Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 0.dp)) {
-
         TextButton(
             onClick = { showDialog = true },
             modifier = Modifier.fillMaxWidth()
@@ -59,7 +54,6 @@ fun DateFilterSection(
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
-
         if (showDialog) {
             DatePickerDialog(
                 onDismissRequest = { showDialog = false },

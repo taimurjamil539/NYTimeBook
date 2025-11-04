@@ -11,28 +11,25 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 private val Context.dataStore by preferencesDataStore("Setting")
-
 class Keyprefs @Inject constructor(@ApplicationContext private val context: Context) {
-
-
     companion object {
         val IS_DARK_MOOD = booleanPreferencesKey("IS_DARK_MOOD")
         val LAST_SYNC_DATE = stringPreferencesKey("LAST_SYNC_DATE")
         val SELECTED_DATE=stringPreferencesKey("SELECTED_DATE")
-
+        const val DEFAULT_SYNC_DATE="Never"
+        const val DEFAULT_SELECTED_DATE=""
     }
-
     val isDarkMood: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[IS_DARK_MOOD] ?: false
     }
     val lastSyncDate: Flow<String> = context.dataStore.data.map { preferences ->
-        preferences[LAST_SYNC_DATE] ?: "Never"
+        preferences[LAST_SYNC_DATE] ?: DEFAULT_SYNC_DATE
 
 
     }
     val selecteddate: Flow<String> = context.dataStore.data.map {
         preferences ->
-        preferences[SELECTED_DATE]?:""
+        preferences[SELECTED_DATE]?:DEFAULT_SELECTED_DATE
     }
     suspend fun savetheme(isDark: Boolean){
         context.dataStore.edit { preferences ->
