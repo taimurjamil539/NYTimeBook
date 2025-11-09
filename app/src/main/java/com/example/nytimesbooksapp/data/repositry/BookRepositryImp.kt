@@ -6,10 +6,10 @@ import com.example.nytimesbooksapp.data.common.mapper.toEntity
 import com.example.nytimesbooksapp.data.local.BookDao
 import com.example.nytimesbooksapp.data.network.ApiService
 import com.example.nytimesbooksapp.domain.model.Bookmodel
-import com.example.nytimesbooksapp.domain.reposotry.Bookrepositry
+import com.example.nytimesbooksapp.domain.reposotry.BookRepositry
 import org.threeten.bp.LocalDate
-class Bookrepositryimp(private val apiService: ApiService, private val bookDao: BookDao):
-    Bookrepositry {
+class BookRepositryImp(private val apiService: ApiService, private val bookDao: BookDao):
+    BookRepositry {
     override suspend fun getbooks(): List<Bookmodel> {
         return try {
             val reposnse=apiService.getbooklist().results.lists.flatMap { it.books }

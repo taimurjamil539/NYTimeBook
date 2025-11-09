@@ -7,20 +7,21 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.nytimesbooksapp.presentation.viewmodel.Bookviewmodel
+import com.example.nytimesbooksapp.presentation.intent.BookIntent
+import com.example.nytimesbooksapp.presentation.viewmodel.BookViewModel
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateFilterSection(
-    viewModel: Bookviewmodel
+    viewmodel: BookViewModel
 ) {
-    val selectedDate by viewModel.selecteddate.collectAsState()
+    val uiState = viewmodel.state.collectAsState()
+    val selectedDate = uiState.value.selectedDate
+
     var showDialog by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
     val isoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -30,11 +31,12 @@ fun DateFilterSection(
         if (selectedDate.isNotEmpty()) {
             try {
                 LocalDate.parse(selectedDate, isoFormatter).format(displayFormatter)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 selectedDate
             }
         } else ""
     }
+
     Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 0.dp)) {
         TextButton(
             onClick = { showDialog = true },
@@ -54,6 +56,7 @@ fun DateFilterSection(
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
+
         if (showDialog) {
             DatePickerDialog(
                 onDismissRequest = { showDialog = false },
@@ -64,8 +67,8 @@ fun DateFilterSection(
                                 val date = Instant.ofEpochMilli(millis)
                                     .atZone(ZoneId.systemDefault())
                                     .toLocalDate()
-                                viewModel.dateselected(date.format(isoFormatter))
-                                viewModel.searchbooks("")
+                                // Send intent instead of direct function call
+                                viewmodel.intentChannel.trySend(BookIntent.SelectDate(date.format(isoFormatter)))
                             }
                             showDialog = false
                         }

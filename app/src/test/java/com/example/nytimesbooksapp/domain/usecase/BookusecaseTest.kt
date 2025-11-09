@@ -4,7 +4,7 @@ import org.junit.Test
 
 import com.example.nytimesbooksapp.data.common.Resources
 import com.example.nytimesbooksapp.domain.model.Bookmodel
-import com.example.nytimesbooksapp.domain.reposotry.Bookrepositry
+import com.example.nytimesbooksapp.domain.reposotry.BookRepositry
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.drop
@@ -12,12 +12,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
-import java.time.LocalDate
+import org.threeten.bp.LocalDate
+
 
 
 class BookusecaseTest {
-   private val mockRepo= mockk<Bookrepositry>()
-    private val usecase= Bookusecase(mockRepo)
+   private val mockRepo= mockk<BookRepositry>()
+    private val usecase= BookUsecase(mockRepo)
 
     @Test
     fun `invoke returns Success with full Bookmodel data`() = runTest {

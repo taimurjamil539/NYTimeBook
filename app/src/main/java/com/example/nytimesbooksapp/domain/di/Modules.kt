@@ -1,7 +1,7 @@
 package com.example.nytimesbooksapp.domain.di
 
-import com.example.nytimesbooksapp.domain.reposotry.Bookrepositry
-import com.example.nytimesbooksapp.domain.usecase.Bookusecase
+import com.example.nytimesbooksapp.domain.reposotry.BookRepositry
+import com.example.nytimesbooksapp.domain.usecase.BookUsecase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -10,8 +10,8 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object Moduless {
     @Provides
-fun provideUsecase(bookrepositry: Bookrepositry): Bookusecase {
-    return Bookusecase(bookrepositry)
+fun provideUsecase(bookrepositry: BookRepositry): BookUsecase {
+    return BookUsecase(bookrepositry)
 }
 }
 

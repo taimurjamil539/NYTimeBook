@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias (libs.plugins.hilt)
     kotlin("kapt")
-
+    alias(libs.plugins.google.gms.google.services)
 
 
 }
@@ -27,6 +27,10 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
+
 
     buildTypes {
         val apikey = properties.getProperty("API_KEY")
@@ -45,6 +49,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -90,6 +95,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material3.android)
+    implementation(libs.firebase.messaging)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -155,6 +161,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.35.1-alpha")
     implementation("androidx.activity:activity-compose:1.9.0")
     implementation("com.jakewharton.threetenabp:threetenabp:1.4.6")
+    implementation("androidx.core:core-ktx:1.13.1")
 
 
 

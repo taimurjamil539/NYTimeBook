@@ -1,6 +1,5 @@
 package com.example.nytimesbooksapp.data.local
 
-
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 @Entity(tableName = "Books")

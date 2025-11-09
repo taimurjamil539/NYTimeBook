@@ -13,7 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.NYtimeprojectBooks.R
-import com.example.nytimesbooksapp.presentation.navgraph.Navroot
+import com.example.nytimesbooksapp.presentation.navgraph.NavRoot
 import kotlinx.coroutines.delay
 
 
@@ -21,8 +21,8 @@ import kotlinx.coroutines.delay
 fun Splashscreen(navController: NavController){
     LaunchedEffect(keys = arrayOf(true)) {
         delay(2000)
-        navController.navigate(Navroot.Home.route){
-            popUpTo(Navroot.Splash.route){inclusive=true}
+        navController.navigate(NavRoot.Home.route){
+            popUpTo(NavRoot.Splash.route){inclusive=true}
         }
     }
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){

@@ -27,183 +27,222 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.nytimesbooksapp.presentation.state.Bookstate
-import com.example.nytimesbooksapp.presentation.viewmodel.Bookviewmodel
-import com.example.nytimesbooksapp.presentation.viewmodel.ErrorMessages
-
-
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+import com.example.nytimesbooksapp.presentation.intent.BookIntent
+import com.example.nytimesbooksapp.presentation.viewmodel.BookViewModel
+import kotlinx.coroutines.delay@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun Homescreen(
     navController: NavController,
-    viewmodel: Bookviewmodel
+    viewmodel: BookViewModel
 ) {
-    val statevalue=viewmodel.state.value
-    val isRefreshing = viewmodel.isrefreshing.value
-    val isDark = viewmodel.isDarkMood.collectAsState(initial = false).value
-    val lastSync = viewmodel.lastSyncDate.collectAsState(initial = "Never").value
-    var searchQuery by remember { mutableStateOf("") }
-    val landscape=IsLandscpe()
+    val uiState = viewmodel.state.collectAsState()
+    val state = uiState.value
     val grideState = rememberLazyGridState()
+    var searchQuery by remember { mutableStateOf("") }
+    val landscape = IsLandscpe()
     var showMenu by remember { mutableStateOf(false) }
+    var hasLoaded by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        viewmodel.getbooks()
+        if(!hasLoaded){
+        viewmodel.intentChannel.send(BookIntent.LoadBooks)
+        hasLoaded=true
+        }
+    }
+    LaunchedEffect(searchQuery) {
+        delay(2000)
+        viewmodel.intentChannel.send(BookIntent.SearchBooks(searchQuery))
     }
     val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
-        onRefresh = { viewmodel.refreshscreen() })
+        refreshing = state.isRefreshing,
+        onRefresh = { viewmodel.intentChannel.trySend(BookIntent.Refresh) }
+    )
     Scaffold(
-            topBar = {
-                Surface(
-                    modifier = Modifier.statusBarsPadding(),
-                    tonalElevation = 4.dp,
-                    shadowElevation = 4.dp,
-                    color = MaterialTheme.colorScheme.primary
+        topBar = {
+            Surface(
+                modifier = Modifier.statusBarsPadding(),
+                tonalElevation = 4.dp,
+                shadowElevation = 4.dp,
+                color = MaterialTheme.colorScheme.primary
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 10.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "NY Time Books",
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 22.sp
-                        )
-                        Box{
-                        IconButton(onClick = {showMenu=!showMenu}) {
-                            Icon(imageVector = Icons.Default.MoreVert, contentDescription = "more option")
-                        }
-                        DropdownMenu(expanded = showMenu, onDismissRequest = {showMenu=false}, modifier = Modifier.background(color  = MaterialTheme.colorScheme.surface)) {
-                           DropdownMenuItem(onClick = {
-                               showMenu=false
-                               viewmodel.darktoggle(!isDark)
-                           }, text = {
-                               Row(
-                                       verticalAlignment = Alignment.CenterVertically,
-                               horizontalArrangement = Arrangement.SpaceBetween,
-                               modifier = Modifier.fillMaxWidth()
-                               ){
+                    Text(
+                        text = "NY Time Books",
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 22.sp
+                    )
 
-                                   Text(if (isDark) "Light Mode" else "Dark Mode",color = MaterialTheme.colorScheme.onSurface)
-                                   Spacer(Modifier.width(12.dp))
-                                   Icon(
-                                       imageVector = if (isDark)
-                                           Icons.Default.LightMode
-                                       else
-                                           Icons.Default.DarkMode,
-                                       contentDescription = "Toggle Theme"
-                                   )
-                               }
-                           })
-                            DropdownMenuItem(onClick = {showMenu=false
-                            viewmodel.refreshscreen()}, text = {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier.fillMaxWidth()
-                                ){
-                                    Text("Refresh:",color = MaterialTheme.colorScheme.onSurface)
-                                    Spacer(Modifier.width(12.dp))
-                                    Icon(imageVector = Icons.Default.Refresh, contentDescription = "refresh") }
-                            }
+                    Box {
+                        IconButton(onClick = { showMenu = !showMenu }) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "More options"
                             )
-                            DropdownMenuItem(onClick = {},
+                        }
+
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false },
+                            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                        ) {
+                            DropdownMenuItem(
+                                onClick = {
+                                    showMenu = false
+                                    viewmodel.intentChannel.trySend(BookIntent.ToggleTheme(!state.isDarkMode))
+                                },
                                 text = {
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         modifier = Modifier.fillMaxWidth()
-                                    ){ Text("Last Sync: $lastSync",color = MaterialTheme.colorScheme.onSurface) }
+                                    ) {
+                                        Text(
+                                            if (state.isDarkMode) "Light Mode" else "Dark Mode",
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                        Spacer(Modifier.width(12.dp))
+                                        Icon(
+                                            imageVector = if (state.isDarkMode)
+                                                Icons.Default.LightMode
+                                            else
+                                                Icons.Default.DarkMode,
+                                            contentDescription = "Toggle Theme"
+                                        )
+                                    }
                                 }
-                                )
+                            )
+                            DropdownMenuItem(
+                                onClick = {
+                                    showMenu = false
+                                    viewmodel.intentChannel.trySend(BookIntent.Refresh)
+                                },
+                                text = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text("Refresh", color = MaterialTheme.colorScheme.onSurface)
+                                        Spacer(Modifier.width(12.dp))
+                                        Icon(
+                                            imageVector = Icons.Default.Refresh,
+                                            contentDescription = "Refresh"
+                                        )
+                                    }
+                                }
+                            )
+                            DropdownMenuItem(
+                                onClick = {},
+                                text = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            "Last Sync: ${state.lastSync.ifBlank { "Never" }}",
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
+                                }
+                            )
                         }
-                        }
-
                     }
                 }
             }
-        ) { paddingValues ->
-            Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = MaterialTheme.colorScheme.background)
-                        .pullRefresh(pullRefreshState)
-                        .padding(paddingValues)
-                        .padding(horizontal = 12.dp)
-                )  {
-                when (statevalue) {
-                        is Bookstate.Loading -> {
-                            Box(modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.surface), contentAlignment = Alignment.Center) {
-                                LoadingAnimation()
-                            }
-                        }
-                        is Bookstate.Error -> {
-                                ErrorAnimation()
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .pullRefresh(pullRefreshState)
+                .padding(paddingValues)
+                .padding(horizontal = 12.dp)
+        ) {
+            when {
+                state.isLoading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surface),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        LoadingAnimation()
+                    }
+                }
+
+                state.error != null -> {
+                    ErrorAnimation()
+                }
+
+                state.books.isEmpty() -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("No books found", color = MaterialTheme.colorScheme.onSurface)
+                    }
+                }
+
+                else -> {
+                    LazyVerticalGrid(
+                        columns = if (landscape) GridCells.Fixed(4) else GridCells.Fixed(2),
+                        state = grideState,
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            TextField(
+                                value = searchQuery,
+                                onValueChange = { query -> searchQuery = query },
+                                leadingIcon = {
+                                    Icon(Icons.Default.Search, contentDescription = "Search")
+                                },
+                                placeholder = { Text("Search your book") },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 4.dp, vertical = 4.dp)
+                                    .clip(RoundedCornerShape(16.dp)),
+                                singleLine = true,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                                )
+                            )
                         }
 
-                        is Bookstate.Empty -> {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Text(ErrorMessages.EMPTY_ERROR)
-                            }
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            DateFilterSection(viewmodel = viewmodel)
                         }
-                        is Bookstate.Success -> {
-                            val books = statevalue.books
-                            LazyVerticalGrid(
-                                columns = if(landscape)GridCells.Fixed(4) else GridCells.Fixed(2),
-                                state = grideState,
-                                verticalArrangement = Arrangement.spacedBy(6.dp),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-                                item(span = { GridItemSpan(maxLineSpan) }){
-                                    TextField(
-                                        value = searchQuery,
-                                        onValueChange = { query ->
-                                            searchQuery = query
-                                            viewmodel.searchbooks(query)
-                                        },
-                                        leadingIcon = {
-                                            Icon(Icons.Default.Search, contentDescription = "Search")
-                                        },
-                                        placeholder = { Text("Search your book") },
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 4.dp, vertical = 4.dp)
-                                            .clip(RoundedCornerShape(16.dp)),
-                                        singleLine = true,
-                                        colors = OutlinedTextFieldDefaults.colors(
-                                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                            focusedBorderColor = MaterialTheme.colorScheme.primary
-                                        )
-                                    )
-                                }
-                                item(span = {GridItemSpan(maxLineSpan)}){
-                                    DateFilterSection(viewModel = viewmodel)
-                                }
-                                items(books) { book ->
-                                    BookCard(
-                                        book = book,
-                                        navController = navController,
-                                        viewmodel = viewmodel)
-                                }
-                            }
+
+                        items(state.books) { book ->
+                            BookCard(
+                                book = book,
+                                navController = navController,
+                                viewmodel = viewmodel
+                            )
                         }
                     }
-                PullRefreshIndicator(
-                        refreshing = isRefreshing,
-                        state = pullRefreshState,
-                        modifier = Modifier.align(Alignment.TopCenter))
-                    ScrollToTopBottom(grideState = grideState)
+                }
             }
+
+            PullRefreshIndicator(
+                refreshing = state.isRefreshing,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+
+            ScrollToTopBottom(grideState = grideState)
         }
-
+    }
 }
-
-
-

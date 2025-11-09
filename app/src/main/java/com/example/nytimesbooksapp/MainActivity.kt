@@ -1,49 +1,45 @@
 package com.example.nytimesbooksapp
 
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.collectAsState
 import com.example.nytimesbooksapp.presentation.navgraph.Navgraph
-import com.example.nytimesbooksapp.ui.theme.NYTimesBooksAppTheme
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.nytimesbooksapp.presentation.viewmodel.Bookviewmodel
+import com.example.nytimesbooksapp.presentation.viewmodel.BookViewModel
 import com.example.nytimesbooksapp.ui.theme.MyAppTheme
+
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.auto(
-                lightScrim = Color.Transparent.toArgb(),
-                darkScrim = Color.Transparent.toArgb()
-            )
-        )
+        enableEdgeToEdge()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1)
+            }
+        }
+
 
         setContent {
-            val viewModel: Bookviewmodel= hiltViewModel()
-            val isDark = viewModel.isDarkMood.collectAsState(initial = false).value
+            val viewModel: BookViewModel= hiltViewModel()
+            val uiState = viewModel.state.collectAsState()
+            val isDarkMode = uiState.value.isDarkMode
 
-            MyAppTheme(darkTheme = isDark) {
+            MyAppTheme(darkTheme = isDarkMode) {
 
 
                 Navgraph()
-
-
-
-
             }
         }
     }

@@ -1,0 +1,9 @@
+package com.example.nytimesbooksapp.presentation.navgraph
+
+
+sealed class NavRoot(val route:String) {
+    object Splash: NavRoot("splash")
+    object Home: NavRoot("home")
+    object Detail: NavRoot("detail")
+
+}

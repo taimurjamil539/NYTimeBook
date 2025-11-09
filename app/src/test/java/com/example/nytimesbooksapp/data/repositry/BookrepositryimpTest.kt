@@ -13,20 +13,20 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import kotlinx.coroutines.test.runTest
-import java.time.LocalDate
 import org.junit.Before
 import org.junit.Test
+import org.threeten.bp.LocalDate
 import org.junit.Assert.*
 
 class BookrepositryimpTest {
     private lateinit var mockApi: ApiService
     private lateinit var mockDao: BookDao
-    private lateinit var repository: Bookrepositryimp
+    private lateinit var repository: BookRepositryImp
     @Before
     fun setUp() {
         mockApi= mockk()
         mockDao=mockk(relaxed = true)
-        repository= Bookrepositryimp(mockApi,mockDao)
+        repository= BookRepositryImp(mockApi,mockDao)
     }
 
     @Test
@@ -140,7 +140,7 @@ class BookrepositryimpTest {
         coEvery { mockApi.getbooklist() } returns apiResponse
         coEvery { mockDao.insertbook(any()) } just runs
 
-        val result=repository.getbookbydate(LocalDate.parse("2025-10-19"))
+        val result=repository.getbookbydate(LocalDate.parse("2025-10-20"))
         assertTrue(result.any { it.title=="Avengers" })
         coVerify { mockDao.insertbook(any()) }
 

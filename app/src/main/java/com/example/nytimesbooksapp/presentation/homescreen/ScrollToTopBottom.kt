@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun ScrollToTopBottom(grideState: LazyGridState){
     val coroutineScope = rememberCoroutineScope()
-
     val showbutton by remember { derivedStateOf{grideState.firstVisibleItemIndex>0} }
     Box (modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd){
         AnimatedVisibility(
@@ -37,6 +36,4 @@ fun ScrollToTopBottom(grideState: LazyGridState){
             }
         }
     }
-
-
 }
