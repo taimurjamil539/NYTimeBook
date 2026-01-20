@@ -1,8 +1,8 @@
 package com.example.nytimesbooksapp.data.repositry
 
 import android.util.Log
-import com.example.nytimesbooksapp.data.common.mapper.toDomain
-import com.example.nytimesbooksapp.data.common.mapper.toEntity
+import com.example.nytimesbooksapp.core.common.mapper.toDomain
+import com.example.nytimesbooksapp.core.common.mapper.toEntity
 import com.example.nytimesbooksapp.data.local.BookDao
 import com.example.nytimesbooksapp.data.network.ApiService
 import com.example.nytimesbooksapp.domain.model.Bookmodel

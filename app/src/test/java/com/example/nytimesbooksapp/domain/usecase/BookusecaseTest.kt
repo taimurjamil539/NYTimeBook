@@ -2,7 +2,7 @@ package com.example.nytimesbooksapp.domain.usecase
 
 import org.junit.Test
 
-import com.example.nytimesbooksapp.data.common.Resources
+import com.example.nytimesbooksapp.core.common.Resources
 import com.example.nytimesbooksapp.domain.model.Bookmodel
 import com.example.nytimesbooksapp.domain.reposotry.BookRepositry
 import io.mockk.coEvery

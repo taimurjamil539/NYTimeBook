@@ -10,5 +10,7 @@ data class BookUiState(
     val error: String? = null,
     val isDarkMode: Boolean = false,
     val lastSync: String = "",
-    val selectedDate: String = ""
+    val selectedDate: String = "",
+    val isRooted: Boolean = false,
+    val isEmulator: Boolean = false
 )

@@ -2,7 +2,9 @@ package com.example.nytimesbooksapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.nytimesbooksapp.data.common.Resources
+import com.example.nytimesbooksapp.core.common.Resources
+import com.example.nytimesbooksapp.core.security.EmulatorDetector
+import com.example.nytimesbooksapp.core.security.RootDetector
 import com.example.nytimesbooksapp.domain.usecase.BookUsecase
 import com.example.nytimesbooksapp.presentation.intent.BookIntent
 import com.example.nytimesbooksapp.presentation.state.BookUiState
@@ -22,12 +24,9 @@ class BookViewModel @Inject constructor(
     private val usecase: BookUsecase,
     private val datastore: Keyprefs
 ) : ViewModel() {
-
     private val _state = MutableStateFlow(BookUiState())
     val state: StateFlow<BookUiState> = _state.asStateFlow()
-
     val intentChannel = Channel<BookIntent>(Channel.UNLIMITED)
-
     init {
         handleIntents()
     }
@@ -42,11 +41,11 @@ class BookViewModel @Inject constructor(
                     is BookIntent.Refresh -> refreshBooks()
                     is BookIntent.ToggleTheme -> toggleTheme(intent.isDark)
                     is BookIntent.SetDetail -> _state.update { it.copy(selectedBook = intent.book) }
+                    is BookIntent.CheckDeviceSecurity -> checkDeviceSecurity()
                 }
             }
         }
     }
-
     private fun loadBooks(forceRefresh: Boolean = false) {
         viewModelScope.launch {
             usecase().collect { result ->
@@ -103,7 +102,6 @@ class BookViewModel @Inject constructor(
             }
         }
     }
-
     private fun refreshBooks() {
         viewModelScope.launch {
             _state.update { it.copy(isRefreshing = true) }
@@ -114,11 +112,17 @@ class BookViewModel @Inject constructor(
             _state.update { it.copy(isRefreshing = false, lastSync = now) }
         }
     }
-
     private fun toggleTheme(isDark: Boolean) {
         viewModelScope.launch {
             datastore.savetheme(isDark)
             _state.update { it.copy(isDarkMode = isDark) }
         }
     }
+    private fun checkDeviceSecurity(){
+        val rooted= RootDetector.isDeviceRooted()
+        val emulator= EmulatorDetector.isEmulator()
+        _state.value= BookUiState(isRooted = rooted, isEmulator = emulator)
+
+    }
+
 }

@@ -9,4 +9,6 @@ sealed class BookIntent {
     object Refresh : BookIntent()
     data class ToggleTheme(val isDark: Boolean) : BookIntent()
     data class SetDetail(val book: Bookmodel?) : BookIntent()
+    object CheckDeviceSecurity : BookIntent()
+
 }

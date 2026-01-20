@@ -1,4 +1,4 @@
-package com.example.nytimesbooksapp.data.common.mapper
+package com.example.nytimesbooksapp.core.common.mapper
 
 import com.example.nytimesbooksapp.data.local.Bookentity
 import com.example.nytimesbooksapp.data.model.Book

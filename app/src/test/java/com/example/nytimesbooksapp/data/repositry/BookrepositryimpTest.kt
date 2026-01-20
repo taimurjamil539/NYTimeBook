@@ -1,6 +1,6 @@
 package com.example.nytimesbooksapp.data.repositry
 
-import com.example.nytimesbooksapp.data.common.mapper.toEntity
+import com.example.nytimesbooksapp.core.common.mapper.toEntity
 import com.example.nytimesbooksapp.data.local.BookDao
 import com.example.nytimesbooksapp.data.model.Book
 import com.example.nytimesbooksapp.data.model.Lists

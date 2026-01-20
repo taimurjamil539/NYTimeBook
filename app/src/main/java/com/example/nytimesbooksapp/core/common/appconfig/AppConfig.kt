@@ -1,4 +1,4 @@
-package com.example.nytimesbooksapp.data.common.appconfig
+package com.example.nytimesbooksapp.core.common.appconfig
 
 import com.example.NYtimeprojectBooks.BuildConfig
 

@@ -1,4 +1,4 @@
-package com.example.nytimesbooksapp.data.common
+package com.example.nytimesbooksapp.core.common
 
 sealed class Resources<T>(val data:T?=null,val message:String?=null) {
    data class Loading<T>(val nothing: Nothing? = null): Resources<T>()

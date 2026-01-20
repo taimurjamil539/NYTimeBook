@@ -1,6 +1,6 @@
 package com.example.nytimesbooksapp.domain.usecase
 
-import com.example.nytimesbooksapp.data.common.Resources
+import com.example.nytimesbooksapp.core.common.Resources
 import com.example.nytimesbooksapp.domain.model.Bookmodel
 import com.example.nytimesbooksapp.domain.reposotry.BookRepositry
 import kotlinx.coroutines.flow.Flow

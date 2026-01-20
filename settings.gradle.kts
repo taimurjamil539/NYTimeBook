@@ -17,3 +17,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "NYtimeprojectBooks"
 include(":app")
+include(":worldclock")
